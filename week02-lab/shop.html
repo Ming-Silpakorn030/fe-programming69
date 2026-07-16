@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>JS Playground</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 720px;
+            margin: 24px auto;
+        }
+
+        #output {
+            background: #eef6f1;
+            border-left: 4px solid #2f6e5b;
+            padding: 14px 18px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 15px;
+            min-height: 60px;
+        }
+
+        .error {
+            color: crimson;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🧪 JS Playground</h1>
+    <p>ผลลัพธ์ของ console.log ทุกบรรทัดจะมาแสดงในกรอบนี้ (แก้โค้ดแล้วกด Ctrl+S หน้าจะรีเฟรชเอง)</p>
+    <pre id="output"></pre>
+
+    <script>
+        // ===== ตัวช่วยแสดงผล: พาผลของ console.log มาแสดงบนหน้าเว็บ =====
+        // (ยังแสดงใน Console ปกติด้วย / ยังไม่ต้องเข้าใจส่วนนี้ สัปดาห์หน้าเรื่อง DOM จะเข้าใจเอง)
+        const output = document.getElementById("output");
+        const _log = console.log;
+        console.log = function (...args) {
+            _log(...args);
+            output.textContent += args.map(a =>
+                typeof a === "object" && a !== null ? JSON.stringify(a) : String(a)
+            ).join(" ") + "\n";
+        };
+        window.onerror = function (message) {
+            const line = document.createElement("span");
+            line.className = "error";
+            line.textContent = "❌ " + message + "\n";
+            output.appendChild(line);
+        };
+        // ===== จบตัวช่วย (อย่าลบส่วนบนนี้) =====
+
+        // 👇 ลบโค้ดทดลองเก่า แล้ววางตัวอย่างใหม่ใต้บรรทัดนี้ 👇
+
+        const products = [
+            { name: "เมาส์", price: 350, inStock: true },
+            { name: "คีย์บอร์ด", price: 1200, inStock: true },
+            { name: "จอมอนิเตอร์", price: 4500, inStock: false },
+            { name: "หูฟัง", price: 890, inStock: true },
+            { name: "ลำโพง", price: 1500, inStock: false }
+        ];
+        // 1) map
+        const labels = products.map(p => `${p.name} ราคา ${p.price} บาท`);
+        console.log(labels);
+
+        // 2) filter
+        const cheapInStock = products.filter(p => p.inStock && p.price <= 1000);
+        console.log(cheapInStock);
+
+        // 3) reduce ต่อจาก filter
+        const totalInStock = products
+            .filter(p => p.inStock)
+            .reduce((sum, p) => sum + p.price, 0);
+        console.log(totalInStock);  // 2440
+
+        // 4) spread เพิ่มสินค้าแบบไม่แก้ของเดิม
+        const newProducts = [...products, { name: "เว็บแคม", price: 990, inStock: true }];
+        console.log(products.length, newProducts.length);  // 5 6
+        // fullName = "คนอื่น";  // ❌ TypeError: Assignment to constant variable.
+
+    </script>
+
+</body>
+
+</html>
